@@ -1,12 +1,12 @@
 {
-  "name": "react-use-script",
+  "name": "react-use-scripts",
   "version": "1.0.0",
-  "description": "Appends script tags to the document",
+  "description": "Appends script tags to the document as functions or components with ease",
   "author": "Olavo Parno",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git://github.com/olavoparno/react-use-script.git"
+    "url": "git://github.com/olavoparno/react-use-scripts.git"
   },
   "main": "dist/index.js",
   "module": "dist/index.es.js",

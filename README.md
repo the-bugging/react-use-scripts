@@ -1,8 +1,8 @@
-# react-use-script
+# react-use-scripts
 
-> Appends script tags to the document with ease
+> Appends script tags to the document as functions or components with ease
 
-[![NPM](https://img.shields.io/npm/v/react-use-script.svg)](https://www.npmjs.com/package/react-use-script)
+[![NPM](https://img.shields.io/npm/v/react-use-scripts.svg)](https://www.npmjs.com/package/react-use-scripts)
 
 ---
 
@@ -18,7 +18,7 @@
 ## Install
 
 ```bash
-npm install --save react-use-script
+npm install --save react-use-scripts
 ```
 
 ---
@@ -29,7 +29,7 @@ npm install --save react-use-script
 
 ```tsx
 import * as React from 'react';
-import { useScript } from 'react-use-script';
+import { useScript } from 'react-use-scripts';
 
 const App = () => {
   const { ScriptLoader } = useScript();
@@ -52,7 +52,7 @@ const App = () => {
 
 ```tsx
 import * as React from 'react';
-import { useScript } from 'react-use-script';
+import { useScript } from 'react-use-scripts';
 
 const App = () => {
   const { appendScript } = useScript();
@@ -77,67 +77,65 @@ const App = () => {
 
 ## Documentation
 
-`useScript()` returns:
+- `useScript()` returns:
 
-1. <ScriptLoader />
+  - ScriptLoader as component
+  - Props:
 
-- Props
+  ```tsx
+  type ScriptLoader = {
+    onCreate?: (() => null) | undefined; // runs after script tag rendering
+    onLoad?: (() => null) | undefined; // runs on script load
+    onError?: ((e: any) => never) | undefined; // runs on script error
+    delayMs?: number | undefined; // run with delayed start
+    htmlPart?: string | undefined; // choose where to append, HEAD or BODY
+    src: string; // script file source path
+    otherProps?: Record<string, unknown> | undefined; // html script tag properties
+  };
+  ```
 
-```tsx
-type ScriptLoader = {
-  onCreate?: (() => null) | undefined; // runs after script tag rendering
-  onLoad?: (() => null) | undefined; // runs on script load
-  onError?: ((e: any) => never) | undefined; // runs on script error
-  delayMs?: number | undefined; // run with delayed start
-  htmlPart?: string | undefined; // choose where to append, HEAD or BODY
-  src: string; // script file source path
-  otherProps?: Record<string, unknown> | undefined; // html script tag properties
-};
-```
+  - Default Props:
 
-- Default Props
+  ```tsx
+  src: undefined;
+  onCreate = () => null;
+  onLoad = () => null;
+  onError = (e) => {
+    throw new URIError(`The script ${e.target.src} is not accessible`);
+  };
+  delayMs = 0;
+  htmlPart = 'head';
+  otherProps: undefined;
+  ```
 
-```tsx
-src: undefined;
-onCreate = () => null;
-onLoad = () => null;
-onError = (e) => {
-  throw new URIError(`The script ${e.target.src} is not accessible`);
-};
-delayMs = 0;
-htmlPart = 'head';
-otherProps: undefined;
-```
+  - appendScript()
+  - Props:
 
-2. appendScript()
+  ```tsx
+  type AppendScript = {
+    id: string; // script id
+    scriptText: string; // script code as string
+    optionalCallback?: (() => null) | undefined; // optional callback function after running
+    htmlPart: string; // choose where to append, HEAD or BODY
+    otherProps?: Record<string, unknown> | undefined; // html script tag properties
+  };
+  ```
 
-- Props
+  - Default Props:
 
-```tsx
-type AppendScript = {
-  id: string; // script id
-  scriptText: string; // script code as string
-  optionalCallback?: (() => null) | undefined; // optional callback function after running
-  htmlPart: string; // choose where to append, HEAD or BODY
-  otherProps?: Record<string, unknown> | undefined; // html script tag properties
-};
-```
-
-- Default Props
-
-```tsx
-id: undefined;
-scriptText: undefined;
-optionalCallback = () => null;
-htmlPart = 'head';
-otherProps = {};
-```
+  ```tsx
+  id: undefined;
+  scriptText: undefined;
+  optionalCallback = () => null;
+  htmlPart = 'head';
+  otherProps = {};
+  ```
 
 ---
 
 ## License
 
-react-use-script is [MIT licensed](./LICENSE).
+react-use-scripts is [MIT licensed](./LICENSE).
 
 ---
 
