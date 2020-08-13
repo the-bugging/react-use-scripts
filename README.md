@@ -18,49 +18,58 @@
 ## Install
 
 ```bash
-npm install --save react-use-hotjar
+npm install --save react-use-script
 ```
 
 ---
 
 ## Usage
 
-- Initializing Hotjar (use it at your very `index.jsx`)
+- Use script tags in your **JSX**
 
 ```tsx
 import * as React from 'react';
+import { useScript } from 'react-use-script';
 
-import { useHotjar } from 'react-use-hotjar';
+const App = () => {
+  const { ScriptLoader } = useScript();
 
-const myCustomLogger = console.info;
-
-const HotjarReadyApp = () => {
-  const { initHotjar } = useHotjar();
-
-  React.useEffect(() => {
-    initHotjar(hotjarId, hotjarVersion, myCustomLogger);
-  });
-
-  return <App />;
+  return (
+    <div>
+      <ScriptLoader
+        id="custom-script"
+        src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
+        delayMs={0}
+        onCreate={() => console.log('created!')}
+        type="text/javascript"
+      />
+    </div>
+  );
 };
 ```
 
-- Identifying Users (use it wherever you get access to user's information)
+- Append scripts to the document programmatically
 
 ```tsx
-const MyCustomComponent = () => {
-  const { initHotjar } = useHotjar();
+import * as React from 'react';
+import { useScript } from 'react-use-script';
 
-  const handleUserInfo = (userInfo) => {
-    const { id, ...restUserInfo } = userInfo;
+const App = () => {
+  const { appendScript } = useScript();
 
-    identifyHotjar(
-      id,
-      JSON.stringify({
-        restUserInfo,
-      })
-    );
-  };
+  React.useEffect(() => {
+    appendScript({
+      id: 'script-append',
+      scriptText: "console.log('my script has been called')",
+      optionalCallback: console.log('optional callback'),
+    });
+  }, [appendScript]);
+
+  return (
+    <div>
+      <h1>Script appended to the head programmatically!</h1>
+    </div>
+  );
 };
 ```
 
@@ -68,38 +77,67 @@ const MyCustomComponent = () => {
 
 ## Documentation
 
-`useHotjar()` returns:
+`useScript()` returns:
 
-- initHotjar()
+1. <ScriptLoader />
 
-1. `hotjarId`: Your Hotjar application ID ex.: 1933331
-2. `hotjarVersion`: Hotjar's current version ex.: 6
-3. `logCallback`: Optional callback for logging wether Hotjar is ready or not
+- Props
 
 ```tsx
-initHotjar: (
-  hotjarId: string,
-  hotjarVersion: string,
-  logCallback?: () => void
-) => boolean;
+type ScriptLoader = {
+  onCreate?: (() => null) | undefined; // runs after script tag rendering
+  onLoad?: (() => null) | undefined; // runs on script load
+  onError?: ((e: any) => never) | undefined; // runs on script error
+  delayMs?: number | undefined; // run with delayed start
+  htmlPart?: string | undefined; // choose where to append, HEAD or BODY
+  src: string; // script file source path
+  otherProps?: Record<string, unknown> | undefined; // html script tag properties
+};
 ```
 
-- identifyHotjar()
-
-1. `userId`: Unique user's identification as string
-2. `userInfo`: Stringfied user info of key-value pairs (note this must not be so long and deep according to [docs](https://help.hotjar.com/hc/en-us/articles/360033640653-Identify-API-Reference))
-3. `logCallback`: Optional callback for logging wether Hotjar identified user or not
+- Default Props
 
 ```tsx
-identifyHotjar: (userId: string, userInfo: string, logCallback?: () => void) =>
-  boolean;
+src: undefined;
+onCreate = () => null;
+onLoad = () => null;
+onError = (e) => {
+  throw new URIError(`The script ${e.target.src} is not accessible`);
+};
+delayMs = 0;
+htmlPart = 'head';
+otherProps: undefined;
+```
+
+2. appendScript()
+
+- Props
+
+```tsx
+type AppendScript = {
+  id: string; // script id
+  scriptText: string; // script code as string
+  optionalCallback?: (() => null) | undefined; // optional callback function after running
+  htmlPart: string; // choose where to append, HEAD or BODY
+  otherProps?: Record<string, unknown> | undefined; // html script tag properties
+};
+```
+
+- Default Props
+
+```tsx
+id: undefined;
+scriptText: undefined;
+optionalCallback = () => null;
+htmlPart = 'head';
+otherProps = {};
 ```
 
 ---
 
 ## License
 
-react-use-hotjar is [MIT licensed](./LICENSE).
+react-use-script is [MIT licensed](./LICENSE).
 
 ---
 
