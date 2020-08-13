@@ -1,21 +1,21 @@
 import * as React from 'react';
 
 type TScriptLoader = {
-  onCreate?: (() => null) | undefined;
-  onLoad?: (() => null) | undefined;
-  onError?: ((e: any) => never) | undefined;
-  delayMs?: number | undefined;
-  htmlPart?: string | undefined;
+  onCreate?: () => null;
+  onLoad?: () => null;
+  onError?: (e: any) => never;
+  delayMs?: number;
+  htmlPart?: string;
   src: string;
-  otherProps?: Record<string, unknown> | undefined;
+  otherProps?: Record<string, unknown>;
 };
 
 type TAppendScript = {
   id: string;
   scriptText: string;
-  optionalCallback?: (() => null) | undefined;
+  optionalCallback?: () => null;
   htmlPart: string;
-  otherProps?: Record<string, unknown> | undefined;
+  otherProps?: Record<string, unknown>;
 };
 
 type TUseScript = {
