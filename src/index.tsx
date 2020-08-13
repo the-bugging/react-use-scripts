@@ -1,59 +1,124 @@
 import * as React from 'react';
-import useAppendHeadScript from './useAppendHeadScript';
 
-type TUseHotjar = {
-  initHotjar: (
-    hotjarId: string,
-    hotjarVersion: string,
-    logCallback?: () => void
-  ) => boolean;
-  identifyHotjar: (
-    userId: string,
-    userInfo: string,
-    logCallback?: () => void
-  ) => boolean;
+type TScriptLoader = {
+  onCreate?: (() => null) | undefined;
+  onLoad?: (() => null) | undefined;
+  onError?: ((e: any) => never) | undefined;
+  delayMs?: number | undefined;
+  htmlPart?: string | undefined;
+  src: string;
+  otherProps?: Record<string, unknown> | undefined;
 };
 
-export function useHotjar(): TUseHotjar {
-  const { appendHeadScript } = useAppendHeadScript();
+type TAppendScript = {
+  id: string;
+  scriptText: string;
+  optionalCallback?: (() => null) | undefined;
+  htmlPart: string;
+  otherProps?: Record<string, unknown> | undefined;
+};
 
-  const initHotjar = React.useCallback(
-    (hotjarId: string, hotjarVersion: string, loggerFunction): boolean => {
-      const hotjarScript = `(function(h,o,t,j,a,r){h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};h._hjSettings={hjid:${hotjarId},hjsv:${hotjarVersion}};a=o.getElementsByTagName('head')[0];r=o.createElement('script');r.async=1;r.src=t+h._hjSettings.hjid+j+h._hjSettings.hjsv;a.appendChild(r);})(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');`;
-      const isHotjarAppended = appendHeadScript(hotjarScript, 'hotjar-script');
+type TUseScript = {
+  ScriptLoader: {
+    ({
+      onCreate,
+      onLoad,
+      onError,
+      delayMs,
+      htmlPart,
+      src,
+      ...otherProps
+    }: TScriptLoader): null;
+  };
+  appendScript: {
+    ({
+      id,
+      scriptText,
+      optionalCallback,
+      htmlPart,
+      otherProps,
+    }: TAppendScript): boolean;
+  };
+};
 
-      if (loggerFunction && typeof loggerFunction === 'function')
-        loggerFunction(`Hotjar ready: ${isHotjarAppended}`);
+const handleScriptAttributes = (
+  script: HTMLScriptElement,
+  otherProps: Record<string, unknown>
+) => {
+  for (const [attr, value] of Object.entries(otherProps)) {
+    script.setAttribute(attr, value as string);
+  }
+};
 
-      return isHotjarAppended;
-    },
-    [appendHeadScript]
-  );
+const ScriptLoader = ({
+  onCreate = () => null,
+  onLoad = () => null,
+  onError = (e) => {
+    throw new URIError(`The script ${e.target.src} is not accessible`);
+  },
+  delayMs = 0,
+  htmlPart = 'head',
+  src,
+  ...otherProps
+}: TScriptLoader): null => {
+  const appendScript = React.useCallback(() => {
+    const script = global.document.createElement('script');
 
-  const identifyHotjar = React.useCallback(
-    (userId: string, userInfo: string, loggerFunction): boolean => {
-      try {
-        const hotjarIdentifyScript = `var userId="${userId}" || null;window.hj("identify",userId,${userInfo});`;
-        const isIdentified = appendHeadScript(
-          hotjarIdentifyScript,
-          'identify-script'
-        );
+    script.src = src;
 
-        if (loggerFunction && typeof loggerFunction === 'function')
-          loggerFunction(`Hotjar identified: ${isIdentified}`);
+    if (otherProps) {
+      handleScriptAttributes(script, otherProps as Record<string, unknown>);
+    }
 
-        return isIdentified;
-      } catch (error) {
-        console.error('Hotjar error:', error);
+    script.onload = onLoad;
+    script.onerror = onError;
 
-        return false;
-      }
-    },
-    [appendHeadScript]
-  );
+    global.document[htmlPart].appendChild(script);
 
-  return React.useMemo(() => ({ initHotjar, identifyHotjar }), [
-    initHotjar,
-    identifyHotjar,
-  ]);
+    onCreate();
+  }, [onCreate, onError, onLoad, otherProps, src, htmlPart]);
+
+  React.useEffect(() => {
+    const timeout = setTimeout(() => appendScript(), delayMs);
+
+    return () => {
+      clearTimeout(timeout);
+    };
+  }, [appendScript, delayMs]);
+
+  return null;
+};
+
+const appendScript = ({
+  id,
+  scriptText,
+  optionalCallback = () => null,
+  htmlPart = 'head',
+  otherProps = {},
+}: TAppendScript): boolean => {
+  try {
+    const existentScript = global.document.getElementById(
+      id
+    ) as HTMLScriptElement;
+    const script = existentScript || global.document.createElement('script');
+
+    script.id = id;
+    script.innerText = scriptText.toString();
+
+    handleScriptAttributes(script, otherProps);
+
+    global.document[htmlPart].appendChild(script);
+
+    optionalCallback();
+
+    return true;
+  } catch (error) {
+    console.error('Must be a string!', error);
+
+    return false;
+  }
+};
+
+export function useScript(): TUseScript {
+  return React.useMemo(() => ({ ScriptLoader, appendScript }), []);
 }

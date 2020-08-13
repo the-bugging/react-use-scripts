@@ -1,12 +1,12 @@
 {
-  "name": "react-use-hotjar",
+  "name": "react-use-script",
   "version": "1.0.6",
-  "description": "Add Hotjar capabilities as custom hooks",
+  "description": "Appends script tags to the document",
   "author": "Olavo Parno",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git://github.com/olavoparno/react-use-hotjar.git"
+    "url": "git://github.com/olavoparno/react-use-script.git"
   },
   "main": "dist/index.js",
   "module": "dist/index.es.js",

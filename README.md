@@ -1,8 +1,8 @@
-# react-use-hotjar
+# react-use-script
 
-> Adds [Hotjar](https://www.hotjar.com/) capabilities as custom hooks to your project
+> Appends script tags to the document with ease
 
-[![NPM](https://img.shields.io/npm/v/react-use-hotjar.svg)](https://www.npmjs.com/package/react-use-hotjar)
+[![NPM](https://img.shields.io/npm/v/react-use-script.svg)](https://www.npmjs.com/package/react-use-script)
 
 ---
 

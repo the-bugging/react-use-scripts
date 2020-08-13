@@ -46,5 +46,6 @@ module.exports = {
     ],
     'react/state-in-constructor': 'off',
     'no-console': 'off',
+    'no-restricted-syntax': 'off',
   },
 };
