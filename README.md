@@ -1,3 +1,5 @@
+<img align="right" alt="traffic" src="https://pv-badge.herokuapp.com/total.svg?repo_id=olavoparno-react-use-scripts"/>
+
 # react-use-scripts
 
 > Appends script tags to the document as functions or components with ease
