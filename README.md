@@ -27,25 +27,27 @@ npm install --save react-use-scripts
 
 ## Usage
 
-- Use script tags in your **JSX**
+- react-use-scripts will return a default export _useScript_ and a named export _{ ScriptLoader }_
+- Use ScriptLoader as an element in your **JSX** and add optional children and/or fallback rendering
 
 ```tsx
 import * as React from 'react';
-import { useScript } from 'react-use-scripts';
+import { ScriptLoader } from 'react-use-scripts';
 
 const App = () => {
-  const { ScriptLoader } = useScript();
-
   return (
-    <div>
-      <ScriptLoader
-        id="custom-script"
-        src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
-        delayMs={0}
-        onCreate={() => console.log('created!')}
-        type="text/javascript"
-      />
-    </div>
+    <ScriptLoader
+      id="custom-script-id"
+      src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
+      delay={500}
+      onReady={() => console.log('ready!')}
+      onError={(error) => console.log('an error has happened!', error)}
+      fallback={(error) => (
+        <span>This has errored! {JSON.stringify(error)}</span>
+      )}
+    >
+      <span>Script has loaded succesfully!
+    </ScriptLoader>
   );
 };
 ```
@@ -54,22 +56,28 @@ const App = () => {
 
 ```tsx
 import * as React from 'react';
-import { useScript } from 'react-use-scripts';
+import useScript from 'react-use-scripts';
 
 const App = () => {
-  const { appendScript } = useScript();
+  const [startTrigger, setStartTrigger] = React.useState(false);
+  const { ready, error } = useScript({
+    src: 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js',
+    onReady: () => console.log('ready!'),
+    onError: (error) => console.log('an error has happened!', error),
+    startTrigger,
+  });
 
-  React.useEffect(() => {
-    appendScript({
-      id: 'script-append',
-      scriptText: "console.log('my script has been called')",
-      optionalCallback: console.log('optional callback'),
-    });
-  }, [appendScript]);
+  const handleAppendScriptClick = () => {
+    setStartTrigger(true);
+  };
 
   return (
     <div>
-      <h1>Script appended to the head programmatically!</h1>
+      <button onClick={handleAppendScriptClick}>
+        Click to start appending
+      </button>
+      {ready && <h1>Script appended to the head programmatically!</h1>}
+      {error && <h1>Script has errored! {JSON.stringify(error)}</h1>}
     </div>
   );
 };
@@ -79,59 +87,54 @@ const App = () => {
 
 ## Documentation
 
-- `useScript()` returns:
+1. `ScriptLoader`: **all props** are optional but without either _src_ or _innerText_ this will return `null`;
 
-  - ScriptLoader as component
-  - Props:
+```tsx
+interface IScriptLoaderProps {
+  src?: string;
+  innerText?: string;
+  onReady?: () => void;
+  onError?: (error: string | Event) => void;
+  otherProps?: THTMLScriptElementProps;
+  startTrigger?: boolean;
+  id?: string;
+  appendTo?: string;
+  delay?: number;
+  children?:
+    | JSX.Element
+    | JSX.Element[]
+    | string
+    | string[]
+    | number
+    | number[];
+  fallback?: (error: string | Event) => JSX.Element;
+}
+```
 
-  ```tsx
-  type ScriptLoader = {
-    onCreate?: (() => null) | undefined; // runs after script tag rendering
-    onLoad?: (() => null) | undefined; // runs on script load
-    onError?: ((e: any) => never) | undefined; // runs on script error
-    delayMs?: number | undefined; // run with delayed start
-    htmlPart?: string | undefined; // choose where to append, HEAD or BODY
-    src: string; // script file source path
-    otherProps?: Record<string, unknown> | undefined; // html script tag properties
-  };
-  ```
+2. useScript
 
-  - Default Props:
+```tsx
+interface IScriptProps {
+  src?: string;
+  innerText?: string;
+  onReady?: () => void;
+  onError?: (error: string | Event) => void;
+  otherProps?: THTMLScriptElementProps;
+  startTrigger?: boolean;
+  id?: string;
+  appendTo?: string;
+  delay?: number;
+}
+```
 
-  ```tsx
-  src: undefined;
-  onCreate = () => null;
-  onLoad = () => null;
-  onError = (e) => {
-    throw new URIError(`The script ${e.target.src} is not accessible`);
-  };
-  delayMs = 0;
-  htmlPart = 'head';
-  otherProps: undefined;
-  ```
+- Default Props:
 
-  - appendScript()
-  - Props:
-
-  ```tsx
-  type AppendScript = {
-    id: string; // script id
-    scriptText: string; // script code as string
-    optionalCallback?: (() => null) | undefined; // optional callback function after running
-    htmlPart: string; // choose where to append, HEAD or BODY
-    otherProps?: Record<string, unknown> | undefined; // html script tag properties
-  };
-  ```
-
-  - Default Props:
-
-  ```tsx
-  id: undefined;
-  scriptText: undefined;
-  optionalCallback = () => null;
-  htmlPart = 'head';
-  otherProps = {};
-  ```
+```tsx
+  startTrigger = true,
+  id = `react-use-script-${new Date().toISOString()}`,
+  appendTo = 'head',
+  delay = 0,
+```
 
 ---
 
