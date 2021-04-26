@@ -1,6 +1,6 @@
 {
   "name": "react-use-scripts",
-  "version": "1.0.3",
+  "version": "2.0.0",
   "description": "Appends script tags to the document as functions or components with ease",
   "author": "Olavo Parno",
   "license": "MIT",
