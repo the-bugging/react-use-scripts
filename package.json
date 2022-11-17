@@ -26,8 +26,8 @@
     }
   },
   "lint-staged": {
-    "*.{js,ts,tsx}": [
-      "eslint --fix src/**/*.{js,jsx,ts,tsx}"
+    "*.{ts}": [
+      "eslint --fix src/**/*.ts"
     ]
   },
   "scripts": {
@@ -37,13 +37,13 @@
     "build": "rollup -c",
     "start": "rollup -c -w",
     "prepare": "npm run build",
-    "format": "prettier --write src/**/*.{js,jsx,ts,tsx}",
-    "lint": "eslint --fix src/**/*.{js,jsx,ts,tsx}",
+    "format": "prettier --write src/**/*.ts",
+    "lint": "eslint --fix src/**/*.ts",
     "make-badges": "echo ok",
     "release": "standard-version"
   },
   "peerDependencies": {
-    "react": "^16.13.1"
+    "react": "^16.13.1 || ^18"
   },
   "devDependencies": {
     "@babel/core": "^7.11.1",
