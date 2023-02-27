@@ -1,7 +1,7 @@
-import typescript from 'rollup-plugin-typescript2';
-import commonjs from 'rollup-plugin-commonjs';
+import typescript from '@rollup/plugin-typescript';
+import commonjs from '@rollup/plugin-commonjs';
+import resolve from '@rollup/plugin-node-resolve';
 import external from 'rollup-plugin-peer-deps-external';
-import resolve from 'rollup-plugin-node-resolve';
 import { terser } from 'rollup-plugin-terser';
 
 import pkg from './package.json';
@@ -17,7 +17,7 @@ export default {
     },
     {
       file: pkg.module,
-      format: 'es',
+      format: 'esm',
       exports: 'named',
       sourcemap: false,
     },
@@ -25,11 +25,8 @@ export default {
   plugins: [
     external(),
     resolve(),
-    typescript({
-      rollupCommonJSResolveHack: true,
-      clean: true,
-    }),
-    commonjs(),
+    commonjs({ extensions: ['.js', '.ts'] }),
+    typescript(),
     terser(),
   ],
 };
