@@ -40,7 +40,8 @@
     "format": "prettier --write src/**/*.ts",
     "lint": "eslint --fix src/**/*.ts",
     "make-badges": "echo ok",
-    "release": "standard-version"
+    "release": "standard-version",
+    "prepublishOnly": "npm run build"
   },
   "peerDependencies": {
     "react": "^16.13.1 || ^18"
