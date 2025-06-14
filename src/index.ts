@@ -32,10 +32,12 @@ export interface IScriptLoaderProps extends IScriptProps {
 
 const handleScriptAttributes = (
   script: HTMLScriptElement,
-  otherProps: THTMLScriptElementProps
+  otherProps?: THTMLScriptElementProps
 ) => {
-  for (const [attr, value] of Object.entries(otherProps)) {
-    script.setAttribute(attr, value as string);
+  if (otherProps) {
+    for (const [attr, value] of Object.entries(otherProps)) {
+      script.setAttribute(attr, value as string);
+    }
   }
 };
 
@@ -55,24 +57,44 @@ export default function useScript({
     ready: false,
     error: null,
   });
+
+  const onReadyRef = React.useRef(onReady);
+  const onErrorRef = React.useRef(onError);
+  const otherPropsRef = React.useRef(otherProps);
+
+  // Update refs when props change
+  React.useEffect(() => {
+    onReadyRef.current = onReady;
+  }, [onReady]);
+
+  React.useEffect(() => {
+    onErrorRef.current = onError;
+  }, [onError]);
+
+  React.useEffect(() => {
+    otherPropsRef.current = otherProps;
+  }, [otherProps]);
+
   const handleOnLoad = React.useCallback(() => {
     setState(() => ({ ready: true, error: null }));
-    onReady?.();
-  }, [onReady]);
+    onReadyRef.current?.();
+  }, []); // No dependencies needed as refs don't change
+
   const handleOnError = React.useCallback(
     (error) => {
       setState(() => ({ ready: false, error }));
-      onError?.(error);
+      onErrorRef.current?.(error);
     },
-    [onError]
+    [] // No dependencies needed as refs don't change
   );
+
   const canRunEffect =
     (typeof src === 'string' && src?.length > 0) ||
     (typeof innerText === 'string' && innerText?.length > 0);
 
   React.useEffect(() => {
     if (canRunEffect && startTrigger && !isLoading.current) {
-      setTimeout(() => {
+      const timeoutId = setTimeout(() => {
         try {
           const script = global.document.createElement('script');
 
@@ -86,8 +108,8 @@ export default function useScript({
 
           script.id = id;
 
-          if (otherProps) {
-            handleScriptAttributes(script, otherProps);
+          if (otherPropsRef.current) {
+            handleScriptAttributes(script, otherPropsRef.current);
           }
 
           script.onload = () => handleOnLoad();
@@ -99,23 +121,28 @@ export default function useScript({
           isLoading.current = true;
 
           if (innerText && !src) {
+            // If it's an inline script, it's considered "loaded" immediately
+            // after being appended.
             handleOnLoad();
           }
         } catch (error) {
           handleOnError(error);
         }
       }, delay);
+      return () => clearTimeout(timeoutId);
     }
+    // If the effect doesn't run, return a no-op cleanup function or undefined.
+    return () => {};
+    // isLoading.current is intentionally not in the dep array,
+    // as we only want to run this effect once based on startTrigger and canRunEffect.
+    // The script loading logic itself should not re-trigger if isLoading changes.
   }, [
-    onReady,
-    onError,
-    otherProps,
     startTrigger,
     id,
     appendTo,
     delay,
-    handleOnLoad,
-    handleOnError,
+    handleOnLoad, // Stable due to useCallback with empty deps
+    handleOnError, // Stable due to useCallback with empty deps
     canRunEffect,
     innerText,
     src,
@@ -156,7 +183,7 @@ export const ScriptLoader = ({
     otherProps,
   });
 
-  console.log('state', { ready, error });
+  // console.log('state', { ready, error }); // Removed console.log
 
   if (ready && children) {
     return children;
