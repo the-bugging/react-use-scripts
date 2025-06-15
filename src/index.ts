@@ -15,7 +15,7 @@ export interface IScriptProps {
   otherProps?: THTMLScriptElementProps;
   startTrigger?: boolean;
   id?: string;
-  appendTo?: string;
+  appendTo?: 'head' | 'body';
   delay?: number;
 }
 
