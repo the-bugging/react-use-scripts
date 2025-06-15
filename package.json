@@ -20,27 +20,34 @@
     "README.md",
     "dist/"
   ],
+  "scripts": {
+    "test": "CI=true react-scripts test --env=jsdom",
+    "test:coverage": "npm run test -- --coverage --watchAll=false",
+    "test:watch": "react-scripts test --env=jsdom",
+    "typecheck": "tsc --noEmit",
+    "prebuild": "rm -rf dist",
+    "build": "rollup -c && tsc -d --emitDeclarationOnly --noEmit false --declarationDir dist",
+    "start": "rollup -c -w",
+    "prepare": "husky install",
+    "format": "prettier --write src/**/*.ts",
+    "lint": "eslint --fix src/**/*.ts",
+    "make-badges": "istanbul-badges-readme --logo=jest",
+    "release": "standard-version",
+    "prepublishOnly": "npm run build"
+  },
   "lint-staged": {
     "*.{ts}": [
       "eslint --fix src/**/*.ts"
     ]
   },
-  "scripts": {
-    "test": "CI=true react-scripts test --env=jsdom || true",
-    "test:watch": "react-scripts test --env=jsdom",
-    "typecheck": "tsc --noEmit",
-    "prebuild": "rm -rf dist",
-    "build": "rollup -c",
-    "start": "rollup -c -w",
-    "prepare": "npm run build",
-    "format": "prettier --write src/**/*.ts",
-    "lint": "eslint --fix src/**/*.ts",
-    "make-badges": "echo ok",
-    "release": "standard-version",
-    "prepublishOnly": "npm run build"
+  "jest": {
+    "coverageReporters": [
+      "lcov",
+      "json-summary"
+    ]
   },
   "peerDependencies": {
-    "react": "^17.0.2 || ^18 || ^19"
+      "react": "^17.0.2 || ^18.0.0 || ^19.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.17.4",
@@ -66,7 +73,8 @@
     "eslint-plugin-prettier": "^4.0.0",
     "eslint-plugin-react": "^7.28.0",
     "eslint-plugin-react-hooks": "^4.3.0",
-    "istanbul-badges-readme": "^1.8.1",
+    "husky": "^7.0.4",
+    "istanbul-badges-readme": "^1.9.0",
     "jest": "^27.5.1",
     "prettier": "^2.5.1",
     "react": "^17.0.2",

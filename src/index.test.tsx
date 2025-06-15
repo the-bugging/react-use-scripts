@@ -10,7 +10,7 @@ interface TestComponentProps {
   onError: (e: Event | string) => void;
   otherProps: any; // Allow any for test flexibility with current THTMLScriptElementProps
   startTrigger?: boolean;
-  appendTo?: string;
+  appendTo?: 'head' | 'body';
 }
 
 const TestComponent: React.FC<TestComponentProps> = ({

@@ -6,6 +6,10 @@
 
 ---
 
+| Statements                                                                                      | Branches                                                                                 | Functions                                                                                     | Lines                                                                                 |
+| ----------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
+| ![Statements](https://img.shields.io/badge/statements-81.81%25-yellow.svg?style=flat&logo=jest) | ![Branches](https://img.shields.io/badge/branches-39.02%25-red.svg?style=flat&logo=jest) | ![Functions](https://img.shields.io/badge/functions-86.66%25-yellow.svg?style=flat&logo=jest) | ![Lines](https://img.shields.io/badge/lines-80.39%25-yellow.svg?style=flat&logo=jest) |
+
 ## Table of Contents
 
 - [Install](#install)
