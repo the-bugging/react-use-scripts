@@ -1,6 +1,6 @@
 {
   "name": "react-use-scripts",
-  "version": "2.0.3",
+  "version": "2.0.4",
   "description": "Appends script tags to the document as functions or components with ease",
   "author": "Olavo Parno",
   "license": "MIT",
@@ -47,7 +47,7 @@
     ]
   },
   "peerDependencies": {
-      "react": "^17.0.2 || ^18.0.0 || ^19.0.0"
+    "react": "^17.0.2 || ^18.0.0 || ^19.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.17.4",

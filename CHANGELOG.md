@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.0.4](https://github.com/the-bugging/react-use-scripts/compare/v2.0.3...v2.0.4) (2025-06-15)
+
+
+### Bug Fixes
+
+* **useScript:** Prevent infinite loops caused by unstable props ([27e1711](https://github.com/the-bugging/react-use-scripts/commit/27e171196197a4651c600c9e320bcf1c43dc7cfc))
+
 ### [2.0.3](https://github.com/the-bugging/react-use-scripts/compare/v2.0.2...v2.0.3) (2023-02-27)
 
 ### [2.0.3](https://github.com/the-bugging/react-use-scripts/compare/v2.0.2...v2.0.3) (2023-02-27)
